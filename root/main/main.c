@@ -35,9 +35,18 @@ void app_main() {
                 // Convertir los datos recibidos a un número entero
                 int numero;
                 sscanf((const char*) data, "%d", &numero);
+
+                // Multiplicar por 10 en ensamblador
+                int resultado;
+                __asm__ __volatile__ (
+                    "slli %0, %1, 3\n"   // %0 = %1 << 3 (num * 8)
+                    "add %0, %0, %1\n"   // %0 = %0 + %1 (num * 8 + num = num * 9)
+                    "add %0, %0, %1\n"   // %0 = %0 + %1 (num * 9 + num = num * 10)
+                    : "=r" (resultado)     // Output: result es un registro de salida (%0)
+                    : "r" (numero)         // Input: num es un registro de entrada (%1)
+                );
                 
-                // Multiplicar por 10
-                int resultado = numero * 10;
+
 
                 // Imprimir resultado por UART
                 printf("\r\nEl número recibido es: %d\r\n", numero);
